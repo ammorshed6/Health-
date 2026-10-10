@@ -28,7 +28,7 @@ jobs:
         run: |
           set -e
           P=android/app/src/main
-          mkdir -p $P/assets $P/java/com/ammorshed/healthhelper $P/res/values
+          mkdir -p $P/assets $P/java/com/ammorshed/healthhelper $P/res/values $P/res/drawable
           cp index.html $P/assets/index.html
 
           cat > android/settings.gradle <<'EOF'
@@ -87,6 +87,7 @@ jobs:
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <application
                   android:label="@string/app_name"
+                  android:icon="@drawable/ic_launcher"
                   android:allowBackup="true"
                   android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar">
                   <activity
@@ -100,6 +101,28 @@ jobs:
                   </activity>
               </application>
           </manifest>
+          EOF
+
+          cat > $P/res/drawable/ic_launcher.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="108dp"
+              android:height="108dp"
+              android:viewportWidth="108"
+              android:viewportHeight="108">
+              <path
+                  android:fillColor="#C62828"
+                  android:pathData="M26,4 H82 A22,22 0 0 1 104,26 V82 A22,22 0 0 1 82,104 H26 A22,22 0 0 1 4,82 V26 A22,22 0 0 1 26,4 Z" />
+              <path
+                  android:fillColor="#FFFFFF"
+                  android:pathData="M54,86 C54,86 24,68 24,47 C24,36 32,29 41,29 C47,29 52,32 54,37 C56,32 61,29 67,29 C76,29 84,36 84,47 C84,68 54,86 54,86 Z" />
+              <path
+                  android:strokeColor="#C62828"
+                  android:strokeWidth="4.5"
+                  android:strokeLineCap="round"
+                  android:strokeLineJoin="round"
+                  android:pathData="M30,55 L43,55 L49,43 L57,68 L62,55 L78,55" />
+          </vector>
           EOF
 
           cat > $P/res/values/strings.xml <<'EOF'
