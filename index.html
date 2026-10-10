@@ -80,7 +80,7 @@ function R(){var p=cur(),h='',a=$('app');
 h+='<div class=pb><select onchange="D.c=this.value;sv();R()">'+D.p.map(function(x){return '<option value='+x.id+(x.id==D.c?' selected':'')+'>'+x.name+'</option>'}).join('')+'</select><button class=sm onclick=pf()>+ নতুন</button>'+(p?'<button class=sm onclick=pf(1)>সম্পাদনা</button>':'')+'</div>';
 if(!p){a.innerHTML=h+'<div class=cd>শুরু করতে একটি প্রোফাইল তৈরি করুন।</div>';return}
 h+='<div><b>'+p.name+'</b>, বয়স '+bn(age(p))+' বছর</div>';
-h+='<div class=tb>'+Object.keys(N).map(function(k){return '<button class='+(k==T?'on':'')+' onclick="T=\''+k+'\';R()">'+N[k]+'</button>'}).join('')+'</div>';
+h+='<div class=tb>'+Object.keys(N).map(function(k){return '<button class="'+(k==T?'on':'')+'" onclick="T=\''+k+'\';R()">'+N[k]+'</button>'}).join('')+'</div>';
 if(T=='bk'){h+='<div class=cd><b>ব্যাকআপ</b><br><small>সব প্রোফাইলের ডেটা শুধু এই ফোনে আছে। নিয়মিত কপি করে নিরাপদ জায়গায় রাখুন।</small><textarea id=tx rows=6></textarea><button class=bt onclick=bkx()>ডেটা দেখান ও কপি</button> <button class=bt onclick=bks()>শেয়ার</button> <button class=bt onclick=bki()>পেস্ট করা ডেটা আমদানি</button></div>'}
 else{var A=p[T];
 h+='<div class=cd><b>নতুন রিডিং</b>';
