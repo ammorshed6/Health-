@@ -18,6 +18,7 @@ label{display:block;margin:8px 0 2px;font-size:14px}
 canvas{width:100%;height:130px;background:#fff;border-radius:12px}
 .lg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin:4px 0}.lg i{display:inline-block;width:14px;height:4px;margin-right:4px;vertical-align:middle}
 .rt{width:100%;border-collapse:collapse;font-size:13px}.rt td{border-bottom:1px solid #e3eeeb;padding:4px 3px;vertical-align:top}
+.rw span:first-child{max-width:40%;font-size:12px}.cv li{list-style:none;display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px solid #e3eeeb;font-size:14px}.cv ul{padding:0;margin:6px 0}.cv .dt{margin-top:7px;flex:none}
 .ov{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:9;display:flex;align-items:center;justify-content:center;padding:14px}.bx{background:#fff;border-radius:14px;padding:16px;width:100%;max-width:420px;max-height:90vh;overflow:auto}
 #tt{position:fixed;bottom:12px;left:12px;right:12px;text-align:center;color:#fff;background:#17302d;border-radius:8px;z-index:20}#tt:empty{display:none}
 .ft,.fn{font-size:12px;color:#456;margin:14px 0}
@@ -27,24 +28,40 @@ canvas{width:100%;height:130px;background:#fff;border-radius:12px}
 <div id="app"></div><div id="md"></div><div id="tt"></div>
 <script>
 var K='hp1',D,T='bp',
-F={bp:[['s','সিস্টোলিক (উপরের)'],['d','ডায়াস্টোলিক (নিচের)'],['pl','পালস (ঐচ্ছিক)']],sg:[['v','মান']],lp:[['tc','মোট কোলেস্টেরল (mg/dL)'],['ldl','LDL (mg/dL)'],['hdl','HDL (mg/dL)'],['tg','ট্রাইগ্লিসারাইড (mg/dL)']],wt:[['w','ওজন (কেজি)'],['wa','কোমর (সেমি, ঐচ্ছিক)']]},
-Q={bp:['s','d'],sg:['v'],lp:[],wt:['w']},
-Lm={s:[50,300],d:[30,200],pl:[20,250],v:[20,900],tc:[50,600],ldl:[10,500],hdl:[5,200],tg:[10,3000],w:[2,300],wa:[20,250]},
-N={bp:'রক্তচাপ',sg:'সুগার',lp:'লিপিড',wt:'ওজন',rp:'রিপোর্ট',bk:'ব্যাকআপ'},
+TY=['bp','sg','ha','lp','wt','kl','ls'],
+SEL={salt:[['0','কম (বাড়তি লবণ নিই না)'],['1','মাঝারি'],['2','বেশি (পাতে বাড়তি লবণ/আচার/শুঁটকি)']],tob:[['0','নেই'],['1','ধূমপান'],['2','জর্দা/ধোঁয়াবিহীন তামাক'],['3','দুটোই']]},
+F={bp:[['s','সিস্টোলিক (উপরের)'],['d','ডায়াস্টোলিক (নিচের)'],['pl','পালস (ঐচ্ছিক)']],
+sg:[['v','মান']],
+ha:[['a','HbA1c (%)']],
+lp:[['tc','মোট কোলেস্টেরল (mg/dL)'],['ldl','LDL (mg/dL)'],['hdl','HDL (mg/dL)'],['tg','ট্রাইগ্লিসারাইড (mg/dL)']],
+wt:[['w','ওজন (কেজি)'],['wa','কোমর (ইঞ্চি, ঐচ্ছিক)']],
+kl:[['cr','Creatinine (mg/dL)','','','ল্যাবে µmol/L লেখা থাকলে ৮৮.৪ দিয়ে ভাগ করুন'],['alt','SGPT / ALT (U/L)'],['ast','SGOT / AST (U/L)'],['ua','Uric acid (mg/dL)']],
+ls:[['ex','হাঁটা/ব্যায়াম (মিনিট)'],['sl','ঘুম (ঘণ্টা)'],['wr','পানি (গ্লাস)'],['st','মানসিক চাপ (১ কম – ৫ বেশি)'],['salt','লবণ গ্রহণ','s'],['tob','তামাক (আজ)','s']]},
+Q={bp:['s','d'],sg:['v'],ha:['a'],lp:[],wt:['w'],kl:[],ls:[]},
+Lm={s:[50,300],d:[30,200],pl:[20,250],v:[20,900],a:[3,20],tc:[50,600],ldl:[10,500],hdl:[5,200],tg:[10,3000],w:[2,300],wa:[20,250],cr:[0.2,15],alt:[1,5000],ast:[1,5000],ua:[1,20],ex:[0,600],sl:[0,24],wr:[0,30],st:[1,5]},
+RZ={bp:1,sg:1,wt:1},
+N={bp:'রক্তচাপ',sg:'সুগার',ha:'HbA1c',lp:'লিপিড',wt:'ওজন',kl:'কিডনি-লিভার',ls:'জীবনযাপন',cv:'হৃদরোগ ঝুঁকি',rp:'রিপোর্ট',bk:'ব্যাকআপ'},
 KL={f:'ফাস্টিং',p:'খাওয়ার ২ ঘণ্টা পর',r:'র‍্যান্ডম'},
 O3='<option value=0>করি না<option value=1>আগে করতাম<option value=2>করি';
 function $(i){return document.getElementById(i)}
 function bn(s){return String(s).replace(/\d/g,function(d){return '০১২৩৪৫৬৭৮৯'[d]})}
 function es(s){return s.replace(/[<>&"']/g,'')}
-function ld(){try{D=JSON.parse(localStorage.getItem(K))}catch(e){}if(!D||!D.p)D={p:[],c:null,u:'mmol'}}
+function pad(n){return n<10?'0'+n:''+n}
+function mig(){D.p.forEach(function(p){TY.forEach(function(k){if(!p[k])p[k]=[]})})}
+function ld(){try{D=JSON.parse(localStorage.getItem(K))}catch(e){}if(!D||!D.p)D={p:[],c:null,u:'mmol'};mig()}
 function sv(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
 function cur(){return D.p.filter(function(x){return x.id==D.c})[0]}
-function age(p){var b=new Date(p.dob),n=new Date(),a=n.getFullYear()-b.getFullYear();if(n.getMonth()<b.getMonth()||(n.getMonth()==b.getMonth()&&n.getDate()<b.getDate()))a--;return a}
+function age(p,t){var b=new Date(p.dob),n=t?new Date(t):new Date(),a=n.getFullYear()-b.getFullYear();if(n.getMonth()<b.getMonth()||(n.getMonth()==b.getMonth()&&n.getDate()<b.getDate()))a--;return a}
 function dd(t){var d=new Date(t);return bn(d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear())}
+function nw(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes())}
+function tm(t){var d=new Date(t),h=d.getHours(),l=h<4?'রাত':h<6?'ভোর':h<12?'সকাল':h<16?'দুপুর':h<18?'বিকাল':h<20?'সন্ধ্যা':'রাত';return dd(t)+' '+bn((h%12||12)+':'+pad(d.getMinutes()))+' '+l}
 function dv(v){return D.u=='mmol'?bn((v/18).toFixed(1))+' mmol/L':bn(v)+' mg/dL'}
+function wi(c){return bn((c/2.54).toFixed(1))}
+function lt(p,t){var A=p[t];return A.length?A[A.length-1]:null}
 function ms(m){$('tt').textContent=m;setTimeout(function(){$('tt').textContent=''},3000)}
 function cl(){$('md').innerHTML=''}
 function cf(m,fn){$('md').innerHTML='<div class=ov><div class=bx><p>'+m+'</p><button class=bt onclick=cl()>না</button> <button class="bt rd" id=yy>হ্যাঁ</button></div></div>';$('yy').onclick=function(){cl();fn()}}
+function egfr(cr,a,sx){var f=sx=='f',k=f?0.7:0.9,al=f?-0.241:-0.302;return 142*Math.pow(Math.min(cr/k,1),al)*Math.pow(Math.max(cr/k,1),-1.2)*Math.pow(0.9938,a)*(f?1.012:1)}
 
 var EV={
 bp:function(r){var s=r.s,d=r.d;
@@ -59,23 +76,55 @@ if(v<70)return['কম (হাইপো)','r','সুগার কম। দ্�
 if(v<a)return['স্বাভাবিক','g','ভালো আছে। সুষম খাবার ও নিয়মিত হাঁটা চালিয়ে যান।'];
 if(v<b)return['প্রি-ডায়াবেটিসের সীমা','y','ভাত ও মিষ্টি কমান, হাঁটুন, ওজন ঠিক রাখুন; ল্যাবে আবার পরীক্ষা করান।'];
 return['ডায়াবেটিসের সীমা','r','HbA1c সহ আবার পরীক্ষা করে চিকিৎসকের সাথে কথা বলুন। ৩০০ mg/dL (১৬.৭ mmol/L) ছাড়ালে বা অসুস্থ লাগলে দ্রুত চিকিৎসা নিন।']},
+ha:function(r,p){var a=r.a,e=Math.round(28.7*a-46.7),es2=' গড় সুগার প্রায় '+dv(e)+' (ADAG সূত্র)।',o=age(p,r.t)>=65?' ৬৫+ বয়সে লক্ষ্যমাত্রা কিছুটা শিথিল হতে পারে (প্রায় ৭.৫–৮%); চিকিৎসকের সাথে ঠিক করুন।':'';
+if(p.dm){if(a<7)return['নিয়ন্ত্রণে ('+bn(a)+'%)','g','ডায়াবেটিস থাকলে সাধারণ লক্ষ্য ৭% এর নিচে। ভালো আছে, নিয়মিত পরীক্ষা চালিয়ে যান।'+es2+o];
+if(a<8)return['লক্ষ্যের সামান্য ওপরে ('+bn(a)+'%)','y','খাদ্যাভ্যাস, হাঁটা ও ওষুধ ঠিকমতো চলছে কি না চিকিৎসকের সাথে দেখুন।'+es2+o];
+return['নিয়ন্ত্রণে নেই ('+bn(a)+'%)','r','চিকিৎসকের সাথে চিকিৎসা পরিকল্পনা পুনর্বিবেচনা করুন।'+es2+o]}
+if(a<5.7)return['স্বাভাবিক ('+bn(a)+'%)','g','ভালো আছে। সুষম খাবার ও নিয়মিত হাঁটা চালিয়ে যান।'+es2];
+if(a<6.5)return['প্রি-ডায়াবেটিসের সীমা ('+bn(a)+'%)','y','ভাত ও মিষ্টি কমান, ওজন ঠিক রাখুন, নিয়মিত হাঁটুন; বছরে অন্তত একবার আবার পরীক্ষা করান।'+es2];
+return['ডায়াবেটিসের সীমা ('+bn(a)+'%)','r','চিকিৎসকের সাথে দেখা করে নিশ্চিত করুন (আলাদা দিনে আবার পরীক্ষা লাগতে পারে)।'+es2]},
 lp:function(r,p){var o=[],w=0,G=['ভালো',0],Y=['সীমারেখা',1],H=['বেশি',2],V=['খুব বেশি',2];
 function a(n,v,c,L){if(v==null)return;var i=0;while(i<c.length&&v>=c[i])i++;o.push(n+': '+L[i][0]);w=Math.max(w,L[i][1])}
 a('মোট',r.tc,[200,240],[G,Y,H]);a('LDL',r.ldl,[100,130,160,190],[G,['প্রায় ভালো',0],Y,H,V]);a('HDL',r.hdl,[p.sx=='m'?40:50],[['কম',2],G]);a('TG',r.tg,[150,200,500],[G,Y,H,V]);
 return[o.join('<br>'),['g','y','r'][w],w?'চর্বি-ভাজাপোড়া, ঘি-মাখন ও লাল মাংস কমান; শাকসবজি, ফাইবার ও মাছ বাড়ান; হাঁটুন। লক্ষ্যমাত্রা ব্যক্তিভেদে ঠিক হয়, তাই চিকিৎসকের সাথে আলোচনা করুন।':'সব ঠিক আছে। খাদ্যাভ্যাস ও হাঁটা চালিয়ে যান।']},
-wt:function(r,p){var b=r.w/Math.pow(p.h*0.0254,2),t=' (BMI '+bn(b.toFixed(1))+')',x=r.wa&&r.wa>=(p.sx=='m'?90:80)?' কোমরের মাপ ঝুঁকির সীমায় (পুরুষ ৯০+, নারী ৮০+ সেমি)।':'';
+wt:function(r,p){var b=r.w/Math.pow(p.h*0.0254,2),t=' (BMI '+bn(b.toFixed(1))+')',x='';
+if(r.wa){if(r.wa>=(p.sx=='m'?90:80))x+=' কোমর '+wi(r.wa)+' ইঞ্চি, ঝুঁকির সীমায় (দক্ষিণ এশীয় পুরুষ ৩৫.৫+, নারী ৩১.৫+ ইঞ্চি)।';
+var q=r.wa/(p.h*2.54);x+=' কোমর/উচ্চতা অনুপাত '+bn(q.toFixed(2))+(q>=0.5?' (০.৫ এর বেশি, ঝুঁকি বেশি)।':' (ভালো)।')}
 if(b<18.5)return['কম ওজন'+t,'y','পুষ্টিকর খাবার বাড়ান; কারণ জানতে চিকিৎসকের সাথে কথা বলুন।'+x];
 if(b<23)return['স্বাভাবিক'+t,'g','ভালো আছে। এই ওজন ধরে রাখুন।'+x];
 if(b<27.5)return['ওজন বেশি'+t,'y','ধীরে ধীরে (সপ্তাহে আধা কেজির মতো) কমান: মিষ্টি, ভাজা ও ভাত কমান, দিনে ৩০ মিনিট হাঁটুন।'+x];
-return['স্থূলতা'+t,'r','খাদ্যাভ্যাস ও হাঁটায় পরিবর্তন আনুন এবং চিকিৎসক বা পুষ্টিবিদের সাথে পরিকল্পনা করুন।'+x]}};
-function ev(t,r,p){if(age(p)<18)return{l:'রেকর্ড করা হলো',c:'y',a:'১৮ বছরের নিচে মান বয়স অনুযায়ী আলাদা। এখানে শুধু রেকর্ড রাখুন এবং শিশুরোগ বিশেষজ্ঞ/চিকিৎসককে দেখান।'};var x=EV[t](r,p);return{l:x[0],c:x[1],a:x[2]}}
-function xn(p,t){var o=[];if(t!='wt'&&(p.sm==2||p.jd==2))o.push('তামাক (ধূমপান/জর্দা) ছাড়া হৃদরোগ ও উচ্চ রক্তচাপের ঝুঁকি কমানোর অন্যতম কার্যকর উপায়।');
-if(p.fh&&t!='wt')o.push('পরিবারে ইতিহাস থাকায় নিয়মিত পরীক্ষা জরুরি।');
+return['স্থূলতা'+t,'r','খাদ্যাভ্যাস ও হাঁটায় পরিবর্তন আনুন এবং চিকিৎসক বা পুষ্টিবিদের সাথে পরিকল্পনা করুন।'+x]},
+kl:function(r,p){var o=[],w=0,kd=0,lv=0,ua=0;function a(c,m){o.push(m);if(c>w)w=c}
+if(r.cr){var g=egfr(r.cr,age(p,r.t),p.sx),gs='eGFR '+bn(g.toFixed(0));
+if(g>=90)a(0,gs+': স্বাভাবিক');else if(g>=60)a(0,gs+': সামান্য কম (বয়সের সাথেও মিলতে পারে)');else if(g>=45){a(1,gs+': মাঝারি কম');kd=1}else if(g>=30){a(2,gs+': অনেক কম');kd=1}else{a(2,gs+': গুরুতর কম');kd=1}}
+[['alt','SGPT'],['ast','SGOT']].forEach(function(z){var v=r[z[0]];if(v==null)return;if(v<=40)a(0,z[1]+': স্বাভাবিক');else if(v<=120){a(1,z[1]+': কিছুটা বেশি');lv=1}else{a(2,z[1]+': অনেক বেশি');lv=1}});
+if(r.ua!=null){if(r.ua>(p.sx=='m'?7:6)){a(1,'Uric acid: বেশি');ua=1}else a(0,'Uric acid: স্বাভাবিক')}
+var t=[];if(kd)t.push('কিডনির কারণ জানতে চিকিৎসকের পরামর্শ নিন; ব্যথার ওষুধ (NSAID) নিজে নিজে খাবেন না, রক্তচাপ ও সুগার নিয়ন্ত্রণে রাখুন।');
+if(lv)t.push('লিভারের কারণ জানতে চিকিৎসকের পরামর্শ নিন; অ্যালকোহল ও অপ্রয়োজনীয় ওষুধ এড়ান, ওজন ও ভাজা-মিষ্টি কমান।');
+if(ua)t.push('পানি বেশি পান করুন; লাল মাংস, কলিজা-গুর্দা ও মিষ্টি পানীয় কমান।');
+return[o.join('<br>'),['g','y','r'][w],(t.length?t.join(' '):'সব ঠিক আছে।')+' ল্যাবভেদে স্বাভাবিক সীমা সামান্য আলাদা হতে পারে, রিপোর্টের রেফারেন্স রেঞ্জও দেখুন। eGFR আনুমানিক (CKD-EPI ২০২১)।']},
+ls:function(r){var o=[],w=0;function a(c,m){o.push(m);if(c>w)w=c}
+if(r.ex!=null)r.ex>=30?a(0,'হাঁটা/ব্যায়াম: ভালো'):a(1,'হাঁটা/ব্যায়াম: কম (লক্ষ্য দিনে ৩০ মিনিট)');
+if(r.sl!=null)(r.sl>=7&&r.sl<=9)?a(0,'ঘুম: ভালো'):a(1,'ঘুম: প্রাপ্তবয়স্কদের জন্য ৭–৯ ঘণ্টা আদর্শ');
+if(r.salt==2)a(1,'লবণ: বেশি');else if(r.salt!=null)a(0,'লবণ: '+(r.salt==1?'মাঝারি':'কম'));
+if(r.st>=4)a(1,'মানসিক চাপ: বেশি');
+if(r.tob>0)a(1,'তামাক ব্যবহার হয়েছে');
+return[o.join('<br>'),['g','y','r'][w],w?'ছোট পরিবর্তন থেকে শুরু করুন: খাওয়ার পর ১০–১৫ মিনিট হাঁটা, রাতে নির্দিষ্ট সময়ে ঘুম, পাতে বাড়তি লবণ বাদ।':'চমৎকার! এই অভ্যাস ধরে রাখুন।']}};
+function ev(t,r,p){if(age(p,r.t)<18)return{l:'রেকর্ড করা হলো',c:'y',a:'১৮ বছরের নিচে মান বয়স অনুযায়ী আলাদা। এখানে শুধু রেকর্ড রাখুন এবং শিশুরোগ বিশেষজ্ঞ/চিকিৎসককে দেখান।'};var x=EV[t](r,p);return{l:x[0],c:x[1],a:x[2]}}
+function xn(p,t){var o=[];if(['bp','sg','ha','lp'].indexOf(t)>=0){if(p.sm==2||p.jd==2)o.push('তামাক (ধূমপান/জর্দা) ছাড়া হৃদরোগ ও উচ্চ রক্তচাপের ঝুঁকি কমানোর অন্যতম কার্যকর উপায়।');
+if(p.fh)o.push('পরিবারে ইতিহাস থাকায় নিয়মিত পরীক্ষা জরুরি।')}
 if(age(p)>=65&&(t=='bp'||t=='sg'))o.push('৬৫+ বয়সে দাঁড়ালে মাথা ঘোরা ও সুগার কমে যাওয়ার বিষয়ে সতর্ক থাকুন।');
 return o.length?'<br><small>'+o.join(' ')+'</small>':''}
-function su(t,r,p){if(t=='bp')return bn(r.s+'/'+r.d)+(r.pl?' পালস '+bn(r.pl):'');if(t=='sg')return KL[r.k]+' '+dv(r.v);
+function rzn(t,r){if(!r.rz)return'';var s='<br><small>🌙 রোজার সময়ের রিডিং। ';
+if(t=='sg')s+='ডায়াবেটিসের ওষুধ বা ইনসুলিন নিলে সময় ও মাত্রা চিকিৎসকের পরামর্শে ঠিক করুন। সুগার ৭০ mg/dL (৩.৯ mmol/L) এর নিচে বা ৩০০ (১৬.৭) এর ওপরে গেলে, বা অসুস্থ লাগলে রোজা ভেঙে চিকিৎসা নেওয়ার পরামর্শ দেওয়া হয় (IDF-DAR)।';
+else if(t=='bp')s+='রোজায় পানিশূন্যতায় প্রেসার কমতে পারে; ওষুধের সময় চিকিৎসকের পরামর্শে ঠিক করুন।';else s+='রোজায় ওজন সামান্য ওঠানামা করতে পারে।';return s+'</small>'}
+function su(t,r,p){var s;
+if(t=='bp')return bn(r.s+'/'+r.d)+(r.pl?' পালস '+bn(r.pl):'');if(t=='sg')return KL[r.k]+' '+dv(r.v);if(t=='ha')return 'HbA1c '+bn(r.a)+'%';
 if(t=='lp')return bn(['tc','ldl','hdl','tg'].filter(function(k){return r[k]}).map(function(k){return k.toUpperCase()+' '+r[k]}).join(' '));
-return bn(r.w+' কেজি, BMI '+(r.w/Math.pow(p.h*0.0254,2)).toFixed(1))}
+if(t=='wt')return bn(r.w+' কেজি, BMI '+(r.w/Math.pow(p.h*0.0254,2)).toFixed(1))+(r.wa?', কোমর '+wi(r.wa)+' ইঞ্চি':'');
+if(t=='kl'){s=[];if(r.cr)s.push('Cr '+bn(r.cr)+' (eGFR '+bn(egfr(r.cr,age(p,r.t),p.sx).toFixed(0))+')');if(r.alt!=null)s.push('SGPT '+bn(r.alt));if(r.ast!=null)s.push('SGOT '+bn(r.ast));if(r.ua!=null)s.push('UA '+bn(r.ua));return s.join(', ')}
+s=[];if(r.ex!=null)s.push('ব্যায়াম '+bn(r.ex)+' মি');if(r.sl!=null)s.push('ঘুম '+bn(r.sl)+' ঘণ্টা');if(r.wr!=null)s.push('পানি '+bn(r.wr)+' গ্লাস');if(r.st!=null)s.push('চাপ '+bn(r.st)+'/৫');
+if(r.salt!=null)s.push('লবণ '+SEL.salt[r.salt][1].split(' ')[0]);if(r.tob>0)s.push('তামাক: '+SEL.tob[r.tob][1]);return s.join(', ')}
 function ch(id,ss,cs){var c=$(id);if(!c)return;var W=c.width=c.clientWidth*2,H=c.height=260,x=c.getContext('2d'),all=[].concat.apply([],ss).filter(function(v){return v!=null});if(all.length<2)return;
 var mn=Math.min.apply(0,all)-2,mx=Math.max.apply(0,all)+2;x.lineWidth=4;
 ss.forEach(function(s,k){var P=s.map(function(v,i){return v==null?null:[20+i*(W-40)/Math.max(s.length-1,1),H-20-(v-mn)/(mx-mn)*(H-40)]});x.strokeStyle=x.fillStyle=cs[k];x.beginPath();var pen=0;
@@ -84,16 +133,45 @@ P.forEach(function(q){if(q){x.beginPath();x.arc(q[0],q[1],5,0,7);x.fill()}})})}
 function lg(t){var m={bp:[['সিস্টোলিক','#0f5e5a'],['ডায়াস্টোলিক','#c0392b']],lp:[['মোট','#0f5e5a'],['LDL','#c0392b'],['HDL','#2e8b57'],['TG','#e0a100']]}[t];
 return m?'<div class=lg>'+m.map(function(x){return '<span><i style="background:'+x[1]+'"></i>'+x[0]+'</span>'}).join('')+'</div>':''}
 
+function wk(p){var A=p.ls.filter(function(r){return r.t>=Date.now()-7*864e5});if(!A.length)return'';
+var ex=0,sl=[],td=0;A.forEach(function(r){if(r.ex!=null)ex+=r.ex;if(r.sl!=null)sl.push(r.sl);if(r.tob>0)td++});
+var avg=sl.length?sl.reduce(function(a,b){return a+b},0)/sl.length:null;
+return '<div class=cd><b>গত ৭ দিন</b> ('+bn(A.length)+'টি এন্ট্রি)<br>ব্যায়াম মোট '+bn(ex)+' মিনিট '+(ex>=150?'✓ (লক্ষ্য সপ্তাহে ১৫০+ মিনিট, WHO)':'(লক্ষ্য সপ্তাহে ১৫০+ মিনিট, WHO)')+(avg!=null?'<br>গড় ঘুম '+bn(avg.toFixed(1))+' ঘণ্টা':'')+(td?'<br>তামাক ব্যবহারের দিন '+bn(td):'')+'</div>'}
+
+function cvh(p){var it=[],m=p.sx=='m',ag=age(p);
+function add(n,st,tx){it.push([n,st,tx])}
+add('বয়স ও লিঙ্গ',(m&&ag>=45)||(!m&&ag>=55)?1:0,bn(ag)+' বছর '+(m?'পুরুষ':'নারী')+((m&&ag>=45)||(!m&&ag>=55)?': বয়সজনিত ঝুঁকি বেশি':''));
+var b=lt(p,'bp');add('রক্তচাপ',b?(b.s>=130||b.d>=80?1:0):-1,b?bn(b.s+'/'+b.d)+(b.s>=130||b.d>=80?': ১৩০/৮০ এর ওপরে':': ঠিক আছে'):'রিডিং নেই');
+var l=lt(p,'lp'),lr=l&&(l.tc>=200||l.ldl>=130||l.tg>=150||(l.hdl&&l.hdl<(m?40:50)));add('কোলেস্টেরল',l?(lr?1:0):-1,l?(lr?'কোনো মান সীমার বাইরে':'সীমার মধ্যে'):'রিপোর্ট নেই');
+var h=lt(p,'ha'),s=null;p.sg.forEach(function(r){if(r.k=='f')s=r});
+var dm=p.dm||(h&&h.a>=5.7)||(s&&s.v>=100);add('ডায়াবেটিস/সুগার',(p.dm||h||s)?(dm?1:0):-1,p.dm?'ডায়াবেটিস আছে':h?'HbA1c '+bn(h.a)+'%':s?'ফাস্টিং '+dv(s.v):'তথ্য নেই');
+add('তামাক',(p.sm==2||p.jd==2)?1:0,(p.sm==2||p.jd==2)?'ধূমপান/জর্দা চলছে':'বর্তমানে ব্যবহার করেন না');
+var w=lt(p,'wt'),wr=w&&(w.w/Math.pow(p.h*0.0254,2)>=23||(w.wa&&w.wa>=(m?90:80)));add('ওজন/কোমর',w?(wr?1:0):-1,w?(wr?'BMI ২৩+ বা কোমর সীমার ওপরে (দক্ষিণ এশীয় মানদণ্ড)':'ঠিক আছে'):'রিডিং নেই');
+add('পারিবারিক ইতিহাস',p.fh?1:0,p.fh?'আছে':'নেই');
+var A=p.ls.filter(function(r){return r.t>=Date.now()-7*864e5&&r.ex!=null}),ex=0;A.forEach(function(r){ex+=r.ex});add('শারীরিক কার্যকলাপ',A.length?(ex<150?1:0):-1,A.length?'গত ৭ দিনে '+bn(ex)+' মিনিট':'জীবনযাপন এন্ট্রি নেই');
+var k=null;p.kl.forEach(function(r){if(r.cr)k=r});var gf=k?egfr(k.cr,age(p,k.t),p.sx):null;add('কিডনি',k?(gf<60?1:0):-1,k?'eGFR '+bn(gf.toFixed(0)):'পরীক্ষা নেই');
+var rk=it.filter(function(x){return x[1]==1}).length,kn=it.filter(function(x){return x[1]>=0}).length,c=rk>=4?'r':rk>=2?'y':'g',lb=rk>=4?'বেশি':rk>=2?'মাঝারি':'কম';
+return '<div class="cd '+c+'"><b>ঝুঁকির কারণ: '+bn(rk)+'টি ('+lb+')</b><br><small>'+bn(kn)+'টি বিষয়ের তথ্য থেকে। রিডিং ও পরীক্ষার তথ্য যত বেশি দেবেন, সারসংক্ষেপ তত নির্ভরযোগ্য।</small></div>'+
+'<div class="cd cv"><ul>'+it.map(function(x){return '<li><i class="dt '+(x[1]==1?'r':x[1]==0?'g':'')+'"></i><span><b>'+x[0]+'</b>: '+x[2]+'</span></li>'}).join('')+'</ul></div>'+
+'<div class=cd><small>এটি ঝুঁকির কারণ গণনা মাত্র, ১০ বছরের শতাংশ ঝুঁকি নয় এবং কোনো স্বীকৃত স্কোরের বিকল্প নয়। দক্ষিণ এশীয়দের তুলনামূলক কম বয়সে ও কম BMI-তে হৃদরোগের ঝুঁকি বেশি, তাই ওজন ও কোমরের সীমা কম ধরা হয়েছে। নির্দিষ্ট শতাংশ ঝুঁকি জানতে চিকিৎসকের কাছে WHO/ISH দক্ষিণ এশিয়া চার্ট বা AHA PREVENT ক্যালকুলেটর দিয়ে হিসাব করান।'+(rk>=3?' ঝুঁকির কারণ ৩টির বেশি হলে চিকিৎসকের সাথে কথা বলুন।':'')+'</small></div>'}
+
 function rp(p){var h='<div class=cd id=rpt><b>স্বাস্থ্য রিপোর্ট</b><br><small>'+p.name+', বয়স '+bn(age(p))+' বছর, '+(p.sx=='m'?'পুরুষ':'নারী')+', উচ্চতা '+bn(p.h)+' ইঞ্চি<br>তৈরির তারিখ: '+dd(Date.now())+'</small>',n=0;
-['bp','sg','lp','wt'].forEach(function(t){var A=p[t];if(!A.length)return;n++;
-h+='<h4 style="margin:12px 0 4px">'+N[t]+'</h4><table class=rt>'+A.slice(-30).reverse().map(function(r){return '<tr><td>'+dd(r.t)+'</td><td>'+su(t,r,p)+'</td><td>'+ev(t,r,p).l+'</td></tr>'}).join('')+'</table>'});
+TY.forEach(function(t){var A=p[t];if(!A.length)return;n++;
+h+='<h4 style="margin:12px 0 4px">'+N[t]+'</h4><table class=rt>'+A.slice(-30).reverse().map(function(r){return '<tr><td>'+tm(r.t)+(r.rz?' 🌙':'')+'</td><td>'+su(t,r,p)+'</td><td>'+ev(t,r,p).l.replace(/<br>/g,'; ')+'</td></tr>'}).join('')+'</table>'});
 if(!n)h+='<p>এখনো কোনো রিডিং নেই।</p>';
-h+='<p class=fn>প্রতিটি বিভাগে সর্বশেষ ৩০টি রিডিং (নতুন আগে)। এটি তথ্যমূলক; রোগ নির্ণয় বা চিকিৎসার বিকল্প নয়।</p></div>';
+h+='<p class=fn>প্রতিটি বিভাগে সর্বশেষ ৩০টি রিডিং (নতুন আগে)। 🌙 = রোজা অবস্থায়। এটি তথ্যমূলক; রোগ নির্ণয় বা চিকিৎসার বিকল্প নয়।</p></div>';
 h+='<div class="cd noprint"><button class=bt onclick=window.print()>প্রিন্ট / PDF</button> <button class=bt onclick=rps()>টেক্সট শেয়ার</button> <button class=bt onclick=rpc()>টেক্সট কপি</button><br><small>ফোনে প্রিন্ট না খুললে "টেক্সট শেয়ার" ব্যবহার করুন।</small></div>';return h}
 function rtx(p){var s='স্বাস্থ্য রিপোর্ট\n'+p.name+', বয়স '+bn(age(p))+' বছর, '+(p.sx=='m'?'পুরুষ':'নারী')+', উচ্চতা '+bn(p.h)+' ইঞ্চি\nতারিখ: '+dd(Date.now())+'\n';
-['bp','sg','lp','wt'].forEach(function(t){var A=p[t];if(!A.length)return;s+='\n'+N[t]+'\n';A.slice(-30).forEach(function(r){s+=dd(r.t)+' | '+su(t,r,p)+' | '+ev(t,r,p).l.replace(/<br>/g,'; ')+'\n'})});return s}
+TY.forEach(function(t){var A=p[t];if(!A.length)return;s+='\n'+N[t]+'\n';A.slice(-30).forEach(function(r){s+=tm(r.t)+(r.rz?' (রোজা)':'')+' | '+su(t,r,p)+' | '+ev(t,r,p).l.replace(/<br>/g,'; ')+'\n'})});return s}
 function rpc(){var t=document.createElement('textarea');t.value=rtx(cur());document.body.appendChild(t);t.select();try{document.execCommand('copy');ms('কপি হয়েছে')}catch(e){ms('কপি সম্ভব হয়নি')}document.body.removeChild(t)}
 function rps(){var s=rtx(cur());if(navigator.share)navigator.share({text:s}).catch(function(){});else rpc()}
+
+function fm(){var h='<div class=cd><b>নতুন রিডিং</b><label>কখন মাপা/পরীক্ষা হয়েছে<input id=i_t type=datetime-local value="'+nw()+'"></label>';
+if(T=='sg')h+='<label>ধরন<select id=i_k><option value=f>ফাস্টিং<option value=p>খাওয়ার ২ ঘণ্টা পর<option value=r>র‍্যান্ডম</select></label><label>একক<select onchange="D.u=this.value;sv();R()"><option value=mmol'+(D.u=='mmol'?' selected':'')+'>mmol/L<option value=mg'+(D.u=='mg'?' selected':'')+'>mg/dL</select></label>';
+F[T].forEach(function(f){if(f[2]=='s'){h+='<label>'+f[1]+'<select id=i_'+f[0]+'>'+SEL[f[0]].map(function(o){return '<option value='+o[0]+'>'+o[1]}).join('')+'</select></label>'}
+else h+='<label>'+(T=='sg'?'মান ('+(D.u=='mmol'?'mmol/L':'mg/dL')+')':f[1])+'<input id=i_'+f[0]+' type=number step=any inputmode=decimal>'+(f[4]?'<small>'+f[4]+'</small>':'')+'</label>'});
+if(RZ[T])h+='<label class=ck><input id=i_rz type=checkbox>রোজা অবস্থায়/রোজার মাসে</label>';
+return h+'<button class=bt onclick=ad()>সংরক্ষণ</button></div>'}
 
 function R(){var p=cur(),h='',a=$('app');
 h+='<div class=pb><select onchange="D.c=this.value;sv();R()">'+D.p.map(function(x){return '<option value='+x.id+(x.id==D.c?' selected':'')+'>'+x.name+'</option>'}).join('')+'</select><button class=sm onclick=pf()>+ নতুন</button>'+(p?'<button class=sm onclick=pf(1)>সম্পাদনা</button>':'')+'</div>';
@@ -102,40 +180,46 @@ h+='<div><b>'+p.name+'</b>, বয়স '+bn(age(p))+' বছর</div>';
 h+='<div class=tb>'+Object.keys(N).map(function(k){return '<button class="'+(k==T?'on':'')+'" onclick="T=\''+k+'\';R()">'+N[k]+'</button>'}).join('')+'</div>';
 if(T=='bk'){h+='<div class=cd><b>ব্যাকআপ</b><br><small>সব প্রোফাইলের ডেটা শুধু এই ফোনে আছে। নিয়মিত কপি করে নিরাপদ জায়গায় রাখুন।</small><textarea id=tx rows=6></textarea><button class=bt onclick=bkx()>ডেটা দেখান ও কপি</button> <button class=bt onclick=bks()>শেয়ার</button> <button class=bt onclick=bki()>পেস্ট করা ডেটা আমদানি</button></div>'}
 else if(T=='rp'){h+=rp(p)}
+else if(T=='cv'){h+=cvh(p)}
 else{var A=p[T];
-h+='<div class=cd><b>নতুন রিডিং</b>';
-if(T=='sg')h+='<label>ধরন<select id=i_k><option value=f>ফাস্টিং<option value=p>খাওয়ার ২ ঘণ্টা পর<option value=r>র‍্যান্ডম</select></label><label>একক<select onchange="D.u=this.value;sv();R()"><option value=mmol'+(D.u=='mmol'?' selected':'')+'>mmol/L<option value=mg'+(D.u=='mg'?' selected':'')+'>mg/dL</select></label>';
-F[T].forEach(function(f){h+='<label>'+(T=='sg'?'মান ('+(D.u=='mmol'?'mmol/L':'mg/dL')+')':f[1])+'<input id=i_'+f[0]+' type=number step=any inputmode=decimal></label>'});
-h+='<button class=bt onclick=ad()>সংরক্ষণ</button></div>';
+h+=fm();
+if(T=='ls')h+=wk(p);
 if(A.length){var l=A[A.length-1],e=ev(T,l,p);
-h+='<div class="cd '+e.c+'"><small>সর্বশেষ: '+dd(l.t)+'</small><br><b>'+e.l+'</b><br>'+e.a+xn(p,T)+'</div>';
-if(A.length>1)h+='<canvas id=cv></canvas>'+lg(T);
-h+='<div class=cd>';A.slice(-15).reverse().forEach(function(r){var q=ev(T,r,p);h+='<div class=rw><span>'+dd(r.t)+'</span><span>'+su(T,r,p)+'</span><i class="dt '+q.c+'"></i><button class=x onclick=dl('+r.t+')>✕</button></div>'});h+='</div>'}}
-h+='<p class=ft>এটি তথ্যমূলক; রোগ নির্ণয় বা চিকিৎসার বিকল্প নয়। মানদণ্ড: AHA/ACC, ADA, WHO, IDF। অসুস্থ বোধ করলে চিকিৎসকের কাছে যান।</p>';
+h+='<div class="cd '+e.c+'"><small>সর্বশেষ: '+tm(l.t)+'</small><br><b>'+e.l+'</b><br>'+e.a+xn(p,T)+rzn(T,l)+'</div>';
+if(A.length>1&&T!='kl'&&T!='ls')h+='<canvas id=cv></canvas>'+lg(T);
+h+='<div class=cd>';A.slice(-15).reverse().forEach(function(r){var q=ev(T,r,p);h+='<div class=rw><span>'+tm(r.t)+(r.rz?' 🌙':'')+'</span><span>'+su(T,r,p)+'</span><i class="dt '+q.c+'"></i><button class=x onclick=dl('+r.t+')>✕</button></div>'});h+='</div>'}}
+h+='<p class=ft>এটি তথ্যমূলক; রোগ নির্ণয় বা চিকিৎসার বিকল্প নয়। মানদণ্ড: AHA/ACC, ADA, WHO, IDF, KDIGO। অসুস্থ বোধ করলে চিকিৎসকের কাছে যান।</p>';
 a.innerHTML=h;
-if(T!='bk'&&T!='rp'&&$('cv')){var z=p[T].slice(-20);ch('cv',T=='bp'?[z.map(function(r){return r.s}),z.map(function(r){return r.d})]:T=='sg'?[z.map(function(r){return D.u=='mmol'?r.v/18:r.v})]:T=='lp'?['tc','ldl','hdl','tg'].map(function(k){return z.map(function(r){return r[k]||null})}):[z.map(function(r){return r.w})],['#0f5e5a','#c0392b','#2e8b57','#e0a100'])}}
+if(['bk','rp','cv','kl','ls'].indexOf(T)<0&&$('cv')){var z=p[T].slice(-20);ch('cv',T=='bp'?[z.map(function(r){return r.s}),z.map(function(r){return r.d})]:T=='sg'?[z.map(function(r){return D.u=='mmol'?r.v/18:r.v})]:T=='ha'?[z.map(function(r){return r.a})]:T=='lp'?['tc','ldl','hdl','tg'].map(function(k){return z.map(function(r){return r[k]||null})}):[z.map(function(r){return r.w})],['#0f5e5a','#c0392b','#2e8b57','#e0a100'])}}
 
-function ad(){var p=cur(),r={t:Date.now()},ok=1,n=0,bad='';
-F[T].forEach(function(f){var v=parseFloat($('i_'+f[0]).value);if(v>0){var lim=Lm[f[0]],cv=(T=='sg'&&D.u=='mmol')?v*18:v;if(lim&&(cv<lim[0]||cv>lim[1]))bad=bad||f[1];r[f[0]]=v;n++}else if(Q[T].indexOf(f[0])>=0)ok=0});
-if(T=='lp')ok=n>0;
+function cvt(t,id,v){if(t=='sg'&&id=='v'&&D.u=='mmol')return Math.round(v*18);if(t=='wt'&&id=='wa')return Math.round(v*25.4)/10;return v}
+function ad(){var p=cur(),r={},ok=1,n=0,bad='',tv=$('i_t').value,t=tv?new Date(tv).getTime():Date.now();
+if(isNaN(t)){ms('তারিখ-সময় সঠিক নয়');return}
+if(t>Date.now()+60000){ms('ভবিষ্যতের সময় দেওয়া যাবে না');return}
+r.t=t;
+F[T].forEach(function(f){var e=$('i_'+f[0]);if(f[2]=='s'){r[f[0]]=parseInt(e.value);return}
+var v=parseFloat(e.value);
+if(!isNaN(v)&&(v>0||(T=='ls'&&v>=0))){var cv=cvt(T,f[0],v),lim=Lm[f[0]];if(lim&&(cv<lim[0]||cv>lim[1]))bad=bad||f[1];r[f[0]]=cv;n++}else if(Q[T].indexOf(f[0])>=0)ok=0});
+if(T=='lp'||T=='kl'||T=='ls')ok=n>0;
 if(!ok){ms('প্রয়োজনীয় ঘর পূরণ করুন');return}
 if(bad){ms(bad+': মানটি অসম্ভব মনে হচ্ছে, আবার দেখুন');return}
 if(T=='bp'&&r.s<=r.d){ms('উপরের মান নিচের চেয়ে বেশি হতে হবে');return}
-if(T=='sg'){r.k=$('i_k').value;if(D.u=='mmol')r.v=Math.round(r.v*18)}
-p[T].push(r);sv();R()}
+if(T=='sg')r.k=$('i_k').value;
+if($('i_rz')&&$('i_rz').checked)r.rz=1;
+p[T].push(r);p[T].sort(function(x,y){return x.t-y.t});sv();R()}
 function dl(t){cf('এই রেকর্ড মুছবেন?',function(){var p=cur();p[T]=p[T].filter(function(r){return r.t!=t});sv();R()})}
-function pf(e){var p=e?cur():{id:Date.now(),name:'',dob:'',sx:'m',h:'',sm:0,jd:0,fh:0,bp:[],sg:[],lp:[],wt:[]};
-$('md').innerHTML='<div class=ov><div class=bx><h3>'+(e?'প্রোফাইল সম্পাদনা':'নতুন প্রোফাইল')+'</h3><label>নাম<input id=f_n value="'+p.name+'"></label><label>জন্মতারিখ<input id=f_d type=date value='+p.dob+'></label><label>লিঙ্গ<select id=f_s><option value=m>পুরুষ<option value=f>নারী</select></label><label>উচ্চতা (ইঞ্চি)<input id=f_h type=number step=any value='+p.h+'></label><label>ধূমপান<select id=f_m>'+O3+'</select></label><label>জর্দা/ধোঁয়াবিহীন তামাক<select id=f_j>'+O3+'</select></label><label class=ck><input id=f_f type=checkbox>পরিবারে ডায়াবেটিস/হৃদরোগ/স্ট্রোকের ইতিহাস আছে</label><button class=bt onclick=ps2()>সংরক্ষণ</button> <button class=bt onclick=cl()>বাতিল</button>'+(e?' <button class="bt rd" onclick=pd2()>মুছুন</button>':'')+'</div></div>';
-$('f_s').value=p.sx;$('f_m').value=p.sm;$('f_j').value=p.jd;$('f_f').checked=!!p.fh;window._p=p;window._e=e}
+function pf(e){var p=e?cur():{id:Date.now(),name:'',dob:'',sx:'m',h:'',sm:0,jd:0,fh:0,dm:0,bp:[],sg:[],ha:[],lp:[],wt:[],kl:[],ls:[]};
+$('md').innerHTML='<div class=ov><div class=bx><h3>'+(e?'প্রোফাইল সম্পাদনা':'নতুন প্রোফাইল')+'</h3><label>নাম<input id=f_n value="'+p.name+'"></label><label>জন্মতারিখ<input id=f_d type=date value='+p.dob+'></label><label>লিঙ্গ<select id=f_s><option value=m>পুরুষ<option value=f>নারী</select></label><label>উচ্চতা (ইঞ্চি)<input id=f_h type=number step=any value='+p.h+'></label><label>ধূমপান<select id=f_m>'+O3+'</select></label><label>জর্দা/ধোঁয়াবিহীন তামাক<select id=f_j>'+O3+'</select></label><label class=ck><input id=f_f type=checkbox>পরিবারে ডায়াবেটিস/হৃদরোগ/স্ট্রোকের ইতিহাস আছে</label><label class=ck><input id=f_dm type=checkbox>আমার ডায়াবেটিস ধরা পড়েছে</label><button class=bt onclick=ps2()>সংরক্ষণ</button> <button class=bt onclick=cl()>বাতিল</button>'+(e?' <button class="bt rd" onclick=pd2()>মুছুন</button>':'')+'</div></div>';
+$('f_s').value=p.sx;$('f_m').value=p.sm;$('f_j').value=p.jd;$('f_f').checked=!!p.fh;$('f_dm').checked=!!p.dm;window._p=p;window._e=e}
 function ps2(){var p=window._p,n=es($('f_n').value.trim()),d=$('f_d').value,h=parseFloat($('f_h').value);
 if(!n||!d||!(h>0)||isNaN(age({dob:d}))){ms('নাম, জন্মতারিখ ও উচ্চতা দিন');return}
 var ag=age({dob:d});if(ag<0||ag>120){ms('জন্মতারিখ সঠিক নয়');return}
 if(h<30||h>100){ms('উচ্চতা ইঞ্চিতে দিন (৩০ থেকে ১০০)');return}
-p.name=n;p.dob=d;p.h=h;p.sx=$('f_s').value;p.sm=+$('f_m').value;p.jd=+$('f_j').value;p.fh=$('f_f').checked?1:0;
+p.name=n;p.dob=d;p.h=h;p.sx=$('f_s').value;p.sm=+$('f_m').value;p.jd=+$('f_j').value;p.fh=$('f_f').checked?1:0;p.dm=$('f_dm').checked?1:0;
 if(!window._e)D.p.push(p);D.c=p.id;sv();cl();R()}
 function pd2(){var id=window._p.id;cf('এই প্রোফাইল ও সব রেকর্ড মুছবেন?',function(){D.p=D.p.filter(function(x){return x.id!=id});D.c=D.p.length?D.p[0].id:null;sv();R()})}
 function bkx(){var t=$('tx');t.value=JSON.stringify(D);t.select();try{document.execCommand('copy');ms('কপি হয়েছে')}catch(e){}}
 function bks(){var s=JSON.stringify(D);if(navigator.share)navigator.share({text:s}).catch(function(){});else ms('শেয়ার সম্ভব নয়, কপি ব্যবহার করুন')}
-function bki(){try{var o=JSON.parse($('tx').value);if(!o.p)throw 1;cf('বর্তমান ডেটা বদলে যাবে। চালিয়ে যাবেন?',function(){D=o;sv();R()})}catch(e){ms('ডেটা সঠিক নয়')}}
+function bki(){try{var o=JSON.parse($('tx').value);if(!o.p)throw 1;cf('বর্তমান ডেটা বদলে যাবে। চালিয়ে যাবেন?',function(){D=o;mig();sv();R()})}catch(e){ms('ডেটা সঠিক নয়')}}
 ld();R();if(!D.p.length)pf();
 </script></body></html>
