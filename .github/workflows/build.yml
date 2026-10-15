@@ -64,6 +64,7 @@ jobs:
           plugins {
               id 'com.android.application'
           }
+          def runNo = System.getenv('GITHUB_RUN_NUMBER') ? System.getenv('GITHUB_RUN_NUMBER').toInteger() : 1
           android {
               namespace 'com.ammorshed.healthhelper'
               compileSdk 34
@@ -71,8 +72,8 @@ jobs:
                   applicationId 'com.ammorshed.healthhelper'
                   minSdk 21
                   targetSdk 34
-                  versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
-                  versionName "1.${System.getenv('GITHUB_RUN_NUMBER') ?: '0'}"
+                  versionCode runNo
+                  versionName '1.' + runNo
               }
               if (System.getenv('KS_FILE')) {
                   signingConfigs {
@@ -234,7 +235,17 @@ jobs:
 
       - name: Build debug APK
         working-directory: android
-        run: gradle assembleDebug --no-daemon
+        run: |
+          set +e
+          gradle assembleDebug --no-daemon > ../build.log 2>&1
+          S=$?
+          if [ $S -ne 0 ]; then
+            echo "::error::Gradle build failed (exit $S)"
+            sed -n '/What went wrong/,/Try:/p' ../build.log | head -12 | while IFS= read -r L; do echo "::error::${L:0:300}"; done
+            tail -8 ../build.log | while IFS= read -r L; do echo "::error::${L:0:300}"; done
+            exit 1
+          fi
+          tail -3 ../build.log
 
       - name: Rename APK
         run: cp android/app/build/outputs/apk/debug/app-debug.apk health-helper.apk
